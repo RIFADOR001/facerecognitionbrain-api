@@ -9,7 +9,6 @@ const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
 
-const test = require('./controllers/test');
 
 const db = knex({
 	client: 'pg',
@@ -58,10 +57,6 @@ app.post('/imageurl', (req, res) => {
 })
 
 
-
-app.post('/test', (req, res) => {
-	test.apiCall(req, res)
-})
 
 
 

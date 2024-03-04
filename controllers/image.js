@@ -34,7 +34,7 @@ const clarifaiJSONRequestOptions = (imageUrl) => {
     },
     body: raw
   };  
-  console.log(requestOptions);
+  // console.log(requestOptions);
   return requestOptions
 }
 
@@ -45,19 +45,45 @@ const handleApiCall = (req, res) => {
   // If that isn't working, then that means you will have to wait until their servers are back up. 
 	// console.log(req.body.input);
 
-	// const regions = result.outputs[0].data.regions;
+	const imUrl0 = req.body.input;
+    // const regions = result.outputs[0].data.regions;
 	fetch("https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs", 
-		clarifaiJSONRequestOptions(req.body.input))
-      .then(response => {
-      	console.log('API response: ', response.outputs);
-      	return res.json(response);
-      	// return response;
-      })
-      .then(response => {
-      	console.log('last: ', response.outputs)
-      })
-      // .then(console.log)
-      .catch(err => res.status(400).json('unable to work with API'))
+		clarifaiJSONRequestOptions(imUrl0))
+      .then(response => response.json())
+    .then(result => {
+
+        const regions = result.outputs[0].data.regions;
+
+        const boxes = regions.forEach(region => {
+            // Accessing and rounding the bounding box values
+            const boundingBox = region.region_info.bounding_box;
+            const topRow = boundingBox.top_row.toFixed(3);
+            const leftCol = boundingBox.left_col.toFixed(3);
+            const bottomRow = boundingBox.bottom_row.toFixed(3);
+            const rightCol = boundingBox.right_col.toFixed(3);
+
+            region.data.concepts.forEach(concept => {
+                // Accessing and rounding the concept value
+                const name = concept.name;
+                const value = concept.value.toFixed(4);
+
+                // console.log(`${name}: ${value} 
+                //     BBox: ${topRow}, 
+                //     ${leftCol}, 
+                //     ${bottomRow}, 
+                //     ${rightCol}`);
+                
+            });
+            // console.log('test regions: ', regions);
+        });
+        // console.log('test regions: ', regions);
+        res.status(200).json(regions);
+
+    })
+    .catch(error => {
+        console.log('error', error)
+        return res.status(400).json('error processing the link');
+    });
 }
 
 
