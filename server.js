@@ -8,6 +8,9 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
+
+const test = require('./controllers/test');
+
 const db = knex({
 	client: 'pg',
 	connection: {
@@ -18,9 +21,9 @@ const db = knex({
 	}
 });
 
-db.select('*').from('users').then(data => {
-	console.log(data);
-})
+// db.select('*').from('users').then(data => {
+// 	console.log(data);
+// })
 
 
 const app = express();
@@ -49,6 +52,20 @@ app.get('/profile/:id', (req, res) => {
 app.put('/image', (req, res) => {
 	image.handleImage(req, res, db)
 })
+
+app.post('/imageurl', (req, res) => {
+	image.handleApiCall(req, res)
+})
+
+
+
+app.post('/test', (req, res) => {
+	test.apiCall(req, res)
+})
+
+
+
+
 
 const port = 3000
 app.listen(port, () => {
